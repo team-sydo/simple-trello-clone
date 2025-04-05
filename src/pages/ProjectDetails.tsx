@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Project, Grain, GrainStatus } from '@/types';
+import { Project, Grain, GrainStatus, GRAIN_TYPE_LABELS } from '@/types';
 import { getProjectById, mockProjects, mockGrains } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Plus, LayoutList, LayoutGrid, Trash, Edit } from 'lucide-react';
+import { ArrowLeft, Plus, LayoutList, LayoutGrid, Trash, Edit, Link2, Users, Palette, Code, User } from 'lucide-react';
 import GrainCard from '@/components/grain/GrainCard';
 import KanbanBoard from '@/components/kanban/KanbanBoard';
 import EntityTable from '@/components/list/EntityTable';
@@ -14,6 +15,8 @@ import ProjectDialog from '@/components/dialogs/ProjectDialog';
 import DetailsDialog from '@/components/dialogs/DetailsDialog';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 const ProjectDetails = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -62,7 +65,9 @@ const ProjectDetails = () => {
       titre: grainData.titre || '',
       description: grainData.description || '',
       status: grainData.status as GrainStatus,
-      projetId: project.id
+      projetId: project.id,
+      type: grainData.type,
+      lien: grainData.lien
     };
     
     // Update local state
@@ -186,6 +191,17 @@ const ProjectDetails = () => {
       accessorKey: 'titre' as keyof Grain,
     },
     {
+      header: 'Type',
+      accessorKey: 'type' as keyof Grain,
+      cell: (grain: Grain) => (
+        grain.type ? (
+          <Badge variant="outline">
+            {GRAIN_TYPE_LABELS[grain.type]}
+          </Badge>
+        ) : null
+      )
+    },
+    {
       header: 'Description',
       accessorKey: 'description' as keyof Grain,
       cell: (grain: Grain) => (
@@ -200,8 +216,33 @@ const ProjectDetails = () => {
       cell: (grain: Grain) => (
         <StatusBadge status={grain.status} />
       )
+    },
+    {
+      header: 'Lien',
+      accessorKey: 'lien' as keyof Grain,
+      cell: (grain: Grain) => (
+        grain.lien ? (
+          <a 
+            href={grain.lien} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-primary hover:underline flex items-center gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Link2 className="h-3 w-3" />
+            Lien
+          </a>
+        ) : null
+      )
     }
   ];
+  
+  // Extract team members
+  const projectWithData = getProjectById(project.id);
+  const chefsDeProjet = projectWithData?.chefsDeProjet || [];
+  const equipeCreatif = projectWithData?.equipeCreatif || [];
+  const equipeTechnique = projectWithData?.equipeTechnique || [];
+  const contacts = projectWithData?.contacts || [];
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -249,6 +290,79 @@ const ProjectDetails = () => {
               </p>
             </div>
             <p>{project.description}</p>
+            
+            {/* Team members section */}
+            {(chefsDeProjet.length > 0 || equipeCreatif.length > 0 || equipeTechnique.length > 0 || contacts.length > 0) && (
+              <div className="mt-4">
+                <Separator className="my-4" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {chefsDeProjet.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-medium">Chefs de projet</h3>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {chefsDeProjet.map((user: any) => (
+                          <Badge key={user.id} variant="outline">
+                            {user.prenom} {user.nom}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {equipeCreatif.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Palette className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-medium">Équipe créative</h3>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {equipeCreatif.map((user: any) => (
+                          <Badge key={user.id} variant="outline">
+                            {user.prenom} {user.nom}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {equipeTechnique.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Code className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-medium">Équipe technique</h3>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {equipeTechnique.map((user: any) => (
+                          <Badge key={user.id} variant="outline">
+                            {user.prenom} {user.nom}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {contacts.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-medium">Contacts</h3>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {contacts.map((contact: any) => (
+                          <Badge key={contact.id} variant="outline">
+                            {contact.prenom} {contact.nom}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
             <div className="mt-3">
               <div className="flex justify-between text-sm mb-1">
                 <span>Avancement</span>

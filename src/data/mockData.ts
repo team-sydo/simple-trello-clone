@@ -1,4 +1,5 @@
-import { User, Client, Contact, Project, Grain, ProjectStatus } from "../types";
+
+import { User, Client, Contact, Project, Grain, ProjectStatus, GrainType } from "../types";
 
 // Mock Users
 export const mockUsers: User[] = [
@@ -102,21 +103,26 @@ export const mockGrains: Grain[] = [
     titre: "Analyse des besoins",
     description: "Réaliser une analyse détaillée des besoins du client",
     status: "conception-consultant",
-    projetId: "project1"
+    projetId: "project1",
+    type: "propale",
+    lien: "https://example.com/analyses/client1"
   },
   {
     id: "grain2",
     titre: "Maquettes UI",
     description: "Créer les maquettes d'interface utilisateur",
     status: "conception-crea",
-    projetId: "project1"
+    projetId: "project1",
+    type: "maquette",
+    lien: "https://figma.com/file/ui-mockups"
   },
   {
     id: "grain3",
     titre: "Développement frontend",
     description: "Implémenter les interfaces utilisateur",
     status: "developpement",
-    projetId: "project1"
+    projetId: "project1",
+    type: "e-learning"
   },
   
   // Project 2 grains
@@ -125,14 +131,17 @@ export const mockGrains: Grain[] = [
     titre: "Proposition commerciale",
     description: "Rédiger la proposition commerciale",
     status: "propal",
-    projetId: "project2"
+    projetId: "project2",
+    type: "propale",
+    lien: "https://drive.com/proposal-doc"
   },
   {
     id: "grain5",
     titre: "Estimation technique",
     description: "Réaliser l'estimation technique du projet",
     status: "conception-consultant",
-    projetId: "project2"
+    projetId: "project2",
+    type: "budget"
   },
   
   // Project 3 grains
@@ -141,21 +150,25 @@ export const mockGrains: Grain[] = [
     titre: "Architecture du système",
     description: "Concevoir l'architecture technique",
     status: "conception-consultant",
-    projetId: "project3"
+    projetId: "project3",
+    type: "propale"
   },
   {
     id: "grain7",
     titre: "Développement backend",
     description: "Développer les APIs et la logique métier",
     status: "developpement",
-    projetId: "project3"
+    projetId: "project3",
+    type: "e-learning",
+    lien: "https://github.com/backend-repo"
   },
   {
     id: "grain8",
     titre: "Tests fonctionnels",
     description: "Réaliser les tests fonctionnels",
     status: "retour-equipe",
-    projetId: "project3"
+    projetId: "project3",
+    type: "maquette"
   },
   
   // Project 4 grains
@@ -164,7 +177,9 @@ export const mockGrains: Grain[] = [
     titre: "Analyse concurrentielle",
     description: "Analyser le positionnement des concurrents",
     status: "appel-offre",
-    projetId: "project4"
+    projetId: "project4",
+    type: "budget",
+    lien: "https://slides.com/market-analysis"
   },
   
   // Project 5 grains
@@ -173,7 +188,9 @@ export const mockGrains: Grain[] = [
     titre: "Revue client finale",
     description: "Présentation finale au client",
     status: "termine",
-    projetId: "project5"
+    projetId: "project5",
+    type: "video",
+    lien: "https://vimeo.com/final-presentation"
   },
 ];
 
@@ -185,7 +202,11 @@ export const mockProjects: Project[] = [
     description: "Refonte complète du site web corporate avec nouvelles fonctionnalités",
     status: "developpement",
     clientId: "client1",
-    grains: mockGrains.filter(grain => grain.projetId === "project1")
+    grains: mockGrains.filter(grain => grain.projetId === "project1"),
+    chefDeProjetIds: ["user1"],
+    equipeCreatifIds: ["user2"],
+    equipeTechniqueIds: ["user3"],
+    contactIds: ["contact1", "contact2"]
   },
   {
     id: "project2",
@@ -193,7 +214,10 @@ export const mockProjects: Project[] = [
     description: "Développement d'une application mobile iOS et Android",
     status: "propal",
     clientId: "client1",
-    grains: mockGrains.filter(grain => grain.projetId === "project2")
+    grains: mockGrains.filter(grain => grain.projetId === "project2"),
+    chefDeProjetIds: ["user1"],
+    equipeCreatifIds: ["user2"],
+    equipeTechniqueIds: ["user3"]
   },
   {
     id: "project3",
@@ -201,7 +225,10 @@ export const mockProjects: Project[] = [
     description: "Mise en place d'un système CRM personnalisé",
     status: "developpement",
     clientId: "client2",
-    grains: mockGrains.filter(grain => grain.projetId === "project3")
+    grains: mockGrains.filter(grain => grain.projetId === "project3"),
+    chefDeProjetIds: ["user1", "user4"],
+    equipeTechniqueIds: ["user3"],
+    contactIds: ["contact3"]
   },
   {
     id: "project4",
@@ -209,7 +236,9 @@ export const mockProjects: Project[] = [
     description: "Réalisation d'une étude de marché pour un nouveau produit",
     status: "appel-offre",
     clientId: "client3",
-    grains: mockGrains.filter(grain => grain.projetId === "project4")
+    grains: mockGrains.filter(grain => grain.projetId === "project4"),
+    chefDeProjetIds: ["user4"],
+    contactIds: ["contact4"]
   },
   {
     id: "project5",
@@ -217,7 +246,10 @@ export const mockProjects: Project[] = [
     description: "Création d'une nouvelle identité visuelle",
     status: "termine",
     clientId: "client3",
-    grains: mockGrains.filter(grain => grain.projetId === "project5")
+    grains: mockGrains.filter(grain => grain.projetId === "project5"),
+    chefDeProjetIds: ["user1"], 
+    equipeCreatifIds: ["user2"],
+    contactIds: ["contact4"]
   },
 ];
 
@@ -225,9 +257,27 @@ export const mockProjects: Project[] = [
 export const getProjectsWithData = () => {
   return mockProjects.map(project => {
     const client = mockClients.find(client => client.id === project.clientId);
+    
+    // Get actual user objects for team members
+    const chefsDeProjet = project.chefDeProjetIds ? 
+      mockUsers.filter(user => project.chefDeProjetIds?.includes(user.id)) : [];
+    
+    const equipeCreatif = project.equipeCreatifIds ?
+      mockUsers.filter(user => project.equipeCreatifIds?.includes(user.id)) : [];
+      
+    const equipeTechnique = project.equipeTechniqueIds ?
+      mockUsers.filter(user => project.equipeTechniqueIds?.includes(user.id)) : [];
+      
+    const contacts = project.contactIds ?
+      mockContacts.filter(contact => project.contactIds?.includes(contact.id)) : [];
+      
     return {
       ...project,
-      client
+      client,
+      chefsDeProjet,
+      equipeCreatif,
+      equipeTechnique,
+      contacts
     };
   });
 };
@@ -240,10 +290,27 @@ export const getProjectById = (projectId: string) => {
   const client = mockClients.find(c => c.id === project.clientId);
   const grains = mockGrains.filter(g => g.projetId === projectId);
   
+  // Get actual user objects for team members
+  const chefsDeProjet = project.chefDeProjetIds ? 
+    mockUsers.filter(user => project.chefDeProjetIds?.includes(user.id)) : [];
+  
+  const equipeCreatif = project.equipeCreatifIds ?
+    mockUsers.filter(user => project.equipeCreatifIds?.includes(user.id)) : [];
+    
+  const equipeTechnique = project.equipeTechniqueIds ?
+    mockUsers.filter(user => project.equipeTechniqueIds?.includes(user.id)) : [];
+    
+  const contacts = project.contactIds ?
+    mockContacts.filter(contact => project.contactIds?.includes(contact.id)) : [];
+    
   return {
     ...project,
     client,
-    grains
+    grains,
+    chefsDeProjet,
+    equipeCreatif,
+    equipeTechnique,
+    contacts
   };
 };
 

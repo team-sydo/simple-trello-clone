@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Grain, GrainStatus, ALL_PROJECT_STATUSES, PROJECT_STATUS_LABELS } from '@/types';
+import { Grain, GrainStatus, ALL_PROJECT_STATUSES, PROJECT_STATUS_LABELS, GrainType, ALL_GRAIN_TYPES, GRAIN_TYPE_LABELS } from '@/types';
 
 type GrainDialogProps = {
   open: boolean;
@@ -37,7 +37,9 @@ const GrainDialog = ({
       titre: '',
       description: '',
       status: 'appel-offre' as GrainStatus,
-      projetId: projectId || ''
+      projetId: projectId || '',
+      type: undefined,
+      lien: ''
     }
   );
   
@@ -49,7 +51,9 @@ const GrainDialog = ({
         titre: '',
         description: '',
         status: 'appel-offre' as GrainStatus,
-        projetId: projectId
+        projetId: projectId,
+        type: undefined,
+        lien: ''
       });
     }
   }, [grain, projectId]);
@@ -105,6 +109,36 @@ const GrainDialog = ({
                 value={formData.description || ''}
                 onChange={handleChange}
                 rows={3}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="type">Type</Label>
+              <Select 
+                value={formData.type} 
+                onValueChange={(value) => handleSelectChange('type', value as GrainType)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ALL_GRAIN_TYPES.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {GRAIN_TYPE_LABELS[type]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="lien">Lien</Label>
+              <Input
+                id="lien"
+                name="lien"
+                value={formData.lien || ''}
+                onChange={handleChange}
+                placeholder="https://"
               />
             </div>
             

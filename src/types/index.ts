@@ -36,12 +36,29 @@ export type ProjectStatus =
 
 export type GrainStatus = ProjectStatus;
 
+export type GrainType = 
+  | "propale"
+  | "budget"
+  | "video"
+  | "maquette"
+  | "e-learning";
+
+export const GRAIN_TYPE_LABELS: Record<GrainType, string> = {
+  "propale": "Propale",
+  "budget": "Budget", 
+  "video": "Vidéo",
+  "maquette": "Maquette",
+  "e-learning": "E-Learning"
+};
+
 export type Grain = {
   id: string;
   titre: string;
   description: string;
   status: GrainStatus;
   projetId: string;
+  type?: GrainType;
+  lien?: string;
 };
 
 export type Project = {
@@ -51,6 +68,10 @@ export type Project = {
   status: ProjectStatus;
   clientId: string;
   grains: Grain[];
+  chefDeProjetIds?: string[];
+  equipeCreatifIds?: string[];
+  equipeTechniqueIds?: string[];
+  contactIds?: string[];
 };
 
 export const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -84,4 +105,12 @@ export const ALL_PROJECT_STATUSES: ProjectStatus[] = [
   "retour-equipe",
   "retour-client",
   "termine"
+];
+
+export const ALL_GRAIN_TYPES: GrainType[] = [
+  "propale",
+  "budget",
+  "video",
+  "maquette",
+  "e-learning"
 ];

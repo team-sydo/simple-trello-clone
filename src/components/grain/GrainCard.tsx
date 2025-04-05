@@ -1,11 +1,12 @@
 
 import React from 'react';
-import { Grain, Project } from '@/types';
+import { Grain, Project, GRAIN_TYPE_LABELS } from '@/types';
 import StatusBadge from '@/components/status/StatusBadge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, MoreVertical } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { FileText, MoreVertical, Link2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
 type GrainCardProps = {
   grain: Grain;
@@ -71,6 +72,31 @@ const GrainCard = ({
       <CardContent className="pt-1">
         <p className="text-sm text-muted-foreground line-clamp-2">{grain.description}</p>
       </CardContent>
+      
+      <CardFooter className="pt-2 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          {grain.type && (
+            <Badge variant="outline" className="text-xs">
+              {GRAIN_TYPE_LABELS[grain.type]}
+            </Badge>
+          )}
+        </div>
+        
+        {grain.lien && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="flex items-center space-x-1 text-xs p-0 h-auto"
+            asChild
+            onClick={(e) => e.stopPropagation()}
+          >
+            <a href={grain.lien} target="_blank" rel="noopener noreferrer">
+              <Link2 className="h-3 w-3 mr-1" />
+              Lien
+            </a>
+          </Button>
+        )}
+      </CardFooter>
     </Card>
   );
 };
