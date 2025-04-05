@@ -8,7 +8,7 @@ import {
   DialogFooter
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Grain, Project, CLIENT_STATUS_COLORS, PROJECT_STATUS_LABELS } from '@/types';
+import { Grain, Project, PROJECT_STATUS_LABELS } from '@/types';
 import StatusBadge from '@/components/status/StatusBadge';
 import { getProjectById, mockClients } from '@/data/mockData';
 import { Pencil, Trash, Folder, FileText, User } from 'lucide-react';

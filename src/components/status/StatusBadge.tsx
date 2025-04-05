@@ -12,7 +12,7 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
   return (
     <span 
       className={cn(
-        'status-badge', 
+        'px-2 py-1 rounded-full text-xs font-medium', 
         PROJECT_STATUS_COLORS[status],
         className
       )}

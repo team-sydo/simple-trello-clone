@@ -1,4 +1,3 @@
-
 import { User, Client, Contact, Project, Grain, ProjectStatus } from "../types";
 
 // Mock Users
@@ -78,19 +77,19 @@ export const mockClients: Client[] = [
   {
     id: "client1",
     nom: "Société A",
-    contacts: ["contact1", "contact2"],
+    contacts: mockContacts.filter(contact => contact.clientId === "client1"),
     projets: ["project1", "project2"]
   },
   {
     id: "client2",
     nom: "Entreprise B",
-    contacts: ["contact3"],
+    contacts: mockContacts.filter(contact => contact.clientId === "client2"),
     projets: ["project3"]
   },
   {
     id: "client3",
     nom: "Compagnie C",
-    contacts: ["contact4"],
+    contacts: mockContacts.filter(contact => contact.clientId === "client3"),
     projets: ["project4", "project5"]
   },
 ];
@@ -251,12 +250,9 @@ export const getProjectById = (projectId: string) => {
 // Helper function to get clients with contacts
 export const getClientsWithContacts = () => {
   return mockClients.map(client => {
-    const clientContacts = mockContacts.filter(contact => 
-      client.contacts.includes(contact.id)
-    );
     return {
       ...client,
-      contacts: clientContacts
+      contacts: client.contacts
     };
   });
 };

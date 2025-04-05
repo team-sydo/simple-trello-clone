@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Project, Grain, GrainStatus } from '@/types';
@@ -246,7 +245,7 @@ const ProjectDetails = () => {
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge status={project.status} />
               <p className="text-sm text-muted-foreground">
-                Client: {project.client?.nom || 'Non assigné'}
+                Client: {(project as any).client?.nom || 'Non assigné'}
               </p>
             </div>
             <p>{project.description}</p>
