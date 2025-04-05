@@ -142,7 +142,7 @@ export function MultiSelect({
 export const MultiSelectTrigger = React.forwardRef<
   React.ElementRef<typeof PopoverTrigger>,
   React.ComponentPropsWithoutRef<typeof PopoverTrigger>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <PopoverTrigger
     ref={ref}
     className={cn(
@@ -150,7 +150,9 @@ export const MultiSelectTrigger = React.forwardRef<
       className
     )}
     {...props}
-  />
+  >
+    {children}
+  </PopoverTrigger>
 ));
 MultiSelectTrigger.displayName = "MultiSelectTrigger";
 
